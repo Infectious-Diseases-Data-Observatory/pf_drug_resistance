@@ -10,12 +10,6 @@ library(plotfunctions)
 library(sf)
 library(sortable)
 
-# read in covariate rasters and transform human pop for visualisation
-indapp_covs = stack("indapp_covs.grd")
-indapp_covs$hpop = log10(indapp_covs$hpop+0.01)
-ind_map = raster("ind_map.grd")
-#indapp_covs$access = 1/(indapp_covs$access + 1)
-
 
 # table summarising covariates for each district
 # added a column here for product of k13 average and uncertainty
@@ -82,7 +76,14 @@ filter_variables = list(access="Accessibility",
                         )
 
 # run this if we update the input data for the app:
-# # summary plots that end up on the last tab of the app
+# summary plots that end up on the last tab of the app
+
+# read in covariate rasters and transform human pop for visualisation
+# indapp_covs = stack("indapp_covs.grd")
+# indapp_covs$hpop = log10(indapp_covs$hpop+0.01)
+# ind_map = raster("ind_map.grd")
+# indapp_covs$access = 1/(indapp_covs$access + 1)
+# 
 # {png("covt_summary_districts.png",
 #     width=2000,
 #     height=2200,
@@ -92,10 +93,18 @@ filter_variables = list(access="Accessibility",
 # for (i in 1:length(filter_variables)){
 #   plot(trim(ind_map), col="grey80", legend=F, main=unlist(filter_variables)[i],
 #        xlab="", ylab="", xaxt="n", yaxt="n")
-#   plot(ind_shp[names(filter_variables)[i]],
-#        col = viridis(100)[as.numeric(cut(district_attributes[,names(filter_variables)[i]],
+#   if (i != 2){
+#     plot(ind_shp[names(filter_variables)[i]],
+#          col = viridis(100)[as.numeric(cut(district_attributes[,names(filter_variables)[i]],
 #                                            breaks=100))],
-#        border=NA, add=TRUE)
+#          border=NA, add=TRUE)
+#   } else { # special case for hpop because it was logged
+#     tmp = 10**district_attributes[,names(filter_variables)[i]] - 0.01
+#     plot(ind_shp[names(filter_variables)[i]],
+#          col = viridis(100)[as.numeric(cut(tmp, breaks=100))],
+#          border=NA, add=TRUE)
+#   }
+# 
 #   # okay the legend is MIA
 # }
 # dev.off()}
@@ -111,10 +120,18 @@ filter_variables = list(access="Accessibility",
 # for (i in 1:length(filter_variables)){
 #   plot(trim(ind_map), col="grey80", legend=F, main=unlist(filter_variables)[i],
 #        xlab="", ylab="", xaxt="n", yaxt="n")
-#   plot(ind_shp[names(filter_variables)[i]],
-#        col = viridis(100)[as.numeric(cut(log10(district_attributes[,names(filter_variables)[i]] + 0.0000000001),
-#                                          breaks=100))],
-#        border=NA, add=TRUE)
+#   if (i != 2){
+#     plot(ind_shp[names(filter_variables)[i]],
+#          col = viridis(100)[as.numeric(cut(log10(district_attributes[,names(filter_variables)[i]] + 0.0000000001),
+#                                            breaks=100))],
+#          border=NA, add=TRUE)
+#   } else {
+#     plot(ind_shp[names(filter_variables)[i]],
+#          col = viridis(100)[as.numeric(cut(district_attributes[,names(filter_variables)[i]],
+#                                            breaks=100))],
+#          border=NA, add=TRUE)
+#   }
+# 
 # }
 # dev.off()}
 

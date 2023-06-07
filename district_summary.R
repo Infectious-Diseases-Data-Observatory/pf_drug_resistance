@@ -12,6 +12,7 @@ ind_shp = st_read("districts")
 ind_covs = stack("indapp_covs.grd")
 ind_covs$hpop = log10(ind_covs$hpop+0.01)
 ind_map = raster("ind_map.grd")
+ind_covs$access = 1/(ind_covs$access + 1)
 
 # accessibility not inverted from travel time to cities ?
 
