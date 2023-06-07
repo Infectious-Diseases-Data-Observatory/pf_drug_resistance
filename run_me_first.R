@@ -82,41 +82,41 @@ filter_variables = list(access="Accessibility",
                         )
 
 # run this if we update the input data for the app:
-# summary plots that end up on the last tab of the app
-{png("covt_summary_districts.png",
-    width=2000,
-    height=2200,
-    pointsize=50)
-par(mfrow=c(ceiling(length(filter_variables)/3), 3),
-    mar=c(0.1,0.1,2.1,4.1), bty="n")
-for (i in 1:length(filter_variables)){
-  plot(trim(ind_map), col="grey80", legend=F, main=unlist(filter_variables)[i],
-       xlab="", ylab="", xaxt="n", yaxt="n")
-  plot(ind_shp[names(filter_variables)[i]],
-       col = viridis(100)[as.numeric(cut(district_attributes[,names(filter_variables)[i]],
-                                           breaks=100))],
-       border=NA, add=TRUE)
-  # okay the legend is MIA
-}
-dev.off()}
-
-# ignore warning about NaNs ... comes from logging the logged hpop
-# should rectify that at some point
-{png("covt_summary_districts_log.png",
-    width=2000,
-    height=2200,
-    pointsize=50)
-par(mfrow=c(ceiling(length(filter_variables)/3), 3),
-    mar=c(0.1,0.1,2.1,4.1), bty="n")
-for (i in 1:length(filter_variables)){
-  plot(trim(ind_map), col="grey80", legend=F, main=unlist(filter_variables)[i],
-       xlab="", ylab="", xaxt="n", yaxt="n")
-  plot(ind_shp[names(filter_variables)[i]],
-       col = viridis(100)[as.numeric(cut(log10(district_attributes[,names(filter_variables)[i]] + 0.0000000001),
-                                         breaks=100))],
-       border=NA, add=TRUE)
-}
-dev.off()}
+# # summary plots that end up on the last tab of the app
+# {png("covt_summary_districts.png",
+#     width=2000,
+#     height=2200,
+#     pointsize=50)
+# par(mfrow=c(ceiling(length(filter_variables)/3), 3),
+#     mar=c(0.1,0.1,2.1,4.1), bty="n")
+# for (i in 1:length(filter_variables)){
+#   plot(trim(ind_map), col="grey80", legend=F, main=unlist(filter_variables)[i],
+#        xlab="", ylab="", xaxt="n", yaxt="n")
+#   plot(ind_shp[names(filter_variables)[i]],
+#        col = viridis(100)[as.numeric(cut(district_attributes[,names(filter_variables)[i]],
+#                                            breaks=100))],
+#        border=NA, add=TRUE)
+#   # okay the legend is MIA
+# }
+# dev.off()}
+# 
+# # ignore warning about NaNs ... comes from logging the logged hpop
+# # should rectify that at some point
+# {png("covt_summary_districts_log.png",
+#     width=2000,
+#     height=2200,
+#     pointsize=50)
+# par(mfrow=c(ceiling(length(filter_variables)/3), 3),
+#     mar=c(0.1,0.1,2.1,4.1), bty="n")
+# for (i in 1:length(filter_variables)){
+#   plot(trim(ind_map), col="grey80", legend=F, main=unlist(filter_variables)[i],
+#        xlab="", ylab="", xaxt="n", yaxt="n")
+#   plot(ind_shp[names(filter_variables)[i]],
+#        col = viridis(100)[as.numeric(cut(log10(district_attributes[,names(filter_variables)[i]] + 0.0000000001),
+#                                          breaks=100))],
+#        border=NA, add=TRUE)
+# }
+# dev.off()}
 
 
 

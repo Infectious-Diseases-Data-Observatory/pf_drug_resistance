@@ -48,6 +48,10 @@ server <- (function(input, output, session){
   })
   
   
+  indiv_filter_plot_height = reactive(
+    return(400*ceiling(length(input$to_list)/2))
+  )
+  
   # filtering plots!
   output$indiv_filter_plots <- renderPlot({
     validate(need(length(input$to_list) >= 1, "Add some filtering variables in the Edit Sidebar tab!"))
@@ -59,7 +63,7 @@ server <- (function(input, output, session){
         par(bty="n", mar=c(0.1,0.1,4.1,0.1))
         plot(ind_map, xlab="", ylab="", xaxt="n", yaxt="n",
              main = paste0("Filter ", i, " - ", filter_variables[[input$to_list[i]]]),
-             legend = FALSE, col="grey90", cex.main=2)
+             legend = FALSE, col="grey90", cex.main=1.5)
         plot(ind_shp[ind_shp$shp_index %in% select_indices, input$to_list[i]], add = TRUE,
              col = viridis(10)[as.numeric(cut(district_attributes[which(district_attributes$shp_index %in% select_indices), 
                                                                   input$to_list[i]],
@@ -68,7 +72,8 @@ server <- (function(input, output, session){
         old_selected=length(select_indices)
       }
     }
-  }, width=800, height=400*ceiling(length(input$to_list)/2)) # height is reactive to number of filters
+  }, width=800, height=function() indiv_filter_plot_height()) 
+  # height is reactive to number of filters
   
   
   # final table !
@@ -77,7 +82,6 @@ server <- (function(input, output, session){
   # Could add in ranking on the table tab (can actually do it within the table object)
   observeEvent(input$update, {
     selected_indices = filter_mat$d[which(filter_mat$d[,ncol(filter_mat$d)] == 1), 1]
-    message(length(selected_indices), "HERE")
     ranked_districts$d = district_attributes[district_attributes$shp_index %in% selected_indices,]
   })
   
