@@ -1,3 +1,5 @@
+# OPEN VERSION
+
 ui <- fluidPage(
   
   # Application title

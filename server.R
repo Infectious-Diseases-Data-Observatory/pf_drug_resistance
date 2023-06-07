@@ -1,3 +1,5 @@
+# OPEN VERSION
+
 server <- (function(input, output, session){
   
   sidebar_inits <- c(25,50,75,100,150,200)
@@ -43,7 +45,6 @@ server <- (function(input, output, session){
       # edit filter mat
       filter_mat$d[which(filter_mat$d[,1] %in% tmp$shp_index), i+1] = 1
     }
-    # write.csv(filter_mat$d, "~/Desktop/filter_mat.csv")
   })
   
   
@@ -59,7 +60,6 @@ server <- (function(input, output, session){
         plot(ind_map, xlab="", ylab="", xaxt="n", yaxt="n",
              main = paste0("Filter ", i, " - ", filter_variables[[input$to_list[i]]]),
              legend = FALSE, col="grey90", cex.main=2)
-        message(old_selected, length(select_indices))
         plot(ind_shp[ind_shp$shp_index %in% select_indices, input$to_list[i]], add = TRUE,
              col = viridis(10)[as.numeric(cut(district_attributes[which(district_attributes$shp_index %in% select_indices), 
                                                                   input$to_list[i]],
@@ -68,7 +68,7 @@ server <- (function(input, output, session){
         old_selected=length(select_indices)
       }
     }
-  }, width=800, height=800) # make height reactive to number of filters
+  }, width=800, height=400*ceiling(length(input$to_list)/2)) # height is reactive to number of filters
   
   
   # final table !
@@ -90,9 +90,10 @@ server <- (function(input, output, session){
   
   output$district_all_covts <- renderImage({
     if (input$log_covt_plots == FALSE){
-      list(src="covt_summary_districts.png", width=1200, height=1800)
+      message(getwd())
+      list(src="covt_summary_districts.png", width=1200, height=1350)
     } else {
-      list(src="covt_summary_districts_log.png", width=1200, height=1800)
+      list(src="covt_summary_districts_log.png", width=1200, height=1350)
     }
   }, deleteFile=FALSE)
   
