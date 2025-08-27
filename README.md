@@ -1,0 +1,146 @@
+*P. falciparum* surveillance site selection support tool
+================
+
+*To run the app locally, ensure `run_me_first.R` is run before
+application code to initialise covariate data!*
+
+### Site selection workflow
+
+1.  Start with all districts in India
+2.  Districts selected: Districts are filtered and ranked by Pf case
+    data and modelling outputs (*extent of current app*)
+3.  Feasible pixels: Pixels are excluded based on thresholds of
+    feasibility in covariates, not implemented in this app
+4.  PHCs in top districts selected: based on further
+    feasibility/convenience, not implemented in this app
+
+### How to use the tool
+
+- To operate the application, navigate to the Edit Sidebar tab. Drag
+  filtering covariates from left to right, and edit the order of
+  covariates if needed. Set the number of districts to be retained by
+  each filter once it appears in the sidebar at far left.
+
+- Press the **“Update filters”** button to see your preferences
+  reflected in the Filtering Maps and Filtering Table tabs. The filters
+  are visualised in sequence in the Filtering Maps tab and the final set
+  of districts are downloadable from the Filtering Table tab.
+
+- To view all available filtering covariates, summarised by district,
+  navigate to the All Covariates tab. Log-transfrom the covariates if
+  needed.
+
+### Covariate layers
+
+There are several covariates included in this tool:
+
+- ***Plasmodium falciparum* temperature suitability, 2010 (Malaria Atlas
+  Project)**  
+  This layer shows the temperature suitability for *Plasmodium
+  falciparum* transmission globally, calculated using a dynamic
+  biological model and spatial time series temperature data. The
+  temperature data used was a time series across an average year
+  (1950-2000).  
+  *Gething PW., Van Boeckel TP., Smith DL., Guerra CA., Patil AP., Snow
+  RW., Hay SI., Modelling the global constraints of temperature on
+  transmission of Plasmodium falciparum and P. vivax Parasites &
+  Vectors. May 2011 4: 92.* <https://doi.org/10.1186/1756-3305-4-92>
+
+- ***Plasmodium falciparum* parasite rate, 2019 (Malaria Atlas
+  Project)**  
+  This layer is a time-aware mosaic data set showing predicted
+  age-standardised parasite rate for *Plasmodium falciparum* malaria for
+  children two to ten years of age (PfPR2-10) for each year. We are
+  using PfPR2-10 estimates for 2019.  
+  *Weiss DJ, Lucas TCD, Nguyen M, et al. Mapping the global prevalence,
+  incidence, and mortality of Plasmodium falciparum, 2000–17: a spatial
+  and temporal modelling study. Lancet 2019; published online June 19.*
+  <https://doi.org/10.1016/S0140-6736(19)31097-9>  
+  *Battle KE, Lucas TCD, Nguyen M, et al. Mapping the global endemicity
+  and clinical burden of Plasmodium vivax, 2000–17: a spatial and
+  temporal modelling study. Lancet 2019; published online June 19.*
+  <https://doi.org/10.1016/S0140-6736(19)31096-7>
+
+- **Predicted travel time to nearest cities in 2015 (Malaria Atlas
+  Project)**  
+  This is a predictive map showing the estimated time to travel (in
+  minutes) from every point on earth to the nearest city (in terms of
+  travel time). Contains data from OpenStreetMap © OpenStreetMap
+  contributors.  
+  *Weiss DJ., Nelson A., Gibson HS., Temperley WH., Peedell S., Lieber
+  A., Hancher M., Poyart E., Belchior S., Fullman N., Mappin B.,
+  Dalrymple U., Rozier J., Lucas TCD., Howes RE., Tusting LS., Kang SY.,
+  Cameron E., Bisanzio D., Battle KE., Bhatt S., Gething PW., A global
+  map of travel time to cities to assess inequalities in accessibility
+  in 2015 Nature. January 2018 553: 333–336.*
+  <http://doi.org/10.1038/nature25181>
+
+- **Human population density estimates (WorldPop project)**  
+  WorldPop program provides high resolution, open and contemporary data
+  on human population distributions.  
+  <https://www.worldpop.org/methods/populations>
+
+- **dhps540E predicted resistance, YEAR**  
+  Predicted median estimated prevalence of the dhp540E marker.
+
+- **dhps540E predicted resistance (uncertainty), YEAR**  
+  Standard deviate of the estimated prevalence of the dhp540E marker.
+
+- **kelch13 predicted resistance, YEAR**  
+  Predicted median estimated prevalence of kelch13 markers (any markers,
+  ie not wildtype).
+
+- **kelch13 predicted resistance (uncertainty), YEAR**  
+  Standard deviate of the estimated prevalence of kelch13 markers (any
+  markers, ie not wildtype).
+
+### Data summarisation
+
+Covariate data are summarised for each district in
+`district_summary.csv`. For accessibility, human population density, Pf
+parasite rate and Pf temperature suitability, these summaries are the
+mean value of the dataset within the raster masked by the district
+boundary. For model outputs, the mean of both the median model
+prediction and model uncertainty are provided, as well as the standard
+deviation of median model predictions (where the former is an average of
+between-prediction uncertainty, and the latter is the a measure of
+variation in median predictions across a district). There are the
+columns `k13median`, `k13mediansd`, `k13sd`. `k13median` and `k13sd` are
+means of the median prediction and standard deviation of the k13 model
+in the district, respectively, while `k13mediansd` is the standard
+deviation of model median predictions.
+
+### R Version Control
+
+All code successfully run with following software versions:
+
+    R version 4.1.2 (2021-11-01)
+    Platform: x86_64-apple-darwin17.0 (64-bit)
+    Running under: macOS Big Sur 11.6.4
+
+    Matrix products: default
+    LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+    locale:
+    [1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+
+    attached base packages:
+    [1] stats     graphics  grDevices utils     datasets  methods   base     
+
+    other attached packages:
+    [1] sf_1.0-7          plotfunctions_1.4 raster_3.5-15     sp_1.4-6          markdown_1.1      DT_0.21          
+    [7] dplyr_1.0.8       viridisLite_0.4.0 shiny_1.7.1      
+
+    loaded via a namespace (and not attached):
+     [1] bslib_0.3.1        tidyselect_1.1.2   terra_1.5-21       xfun_0.30          purrr_0.3.4       
+     [6] lattice_0.20-45    vctrs_0.3.8        generics_0.1.2     htmltools_0.5.2    yaml_2.3.5        
+    [11] utf8_1.2.2         rlang_1.0.2        jquerylib_0.1.4    e1071_1.7-9        later_1.3.0       
+    [16] pillar_1.7.0       glue_1.6.2         withr_2.5.0        DBI_1.1.2          lifecycle_1.0.1   
+    [21] fontawesome_0.2.2  htmlwidgets_1.5.4  codetools_0.2-18   evaluate_0.15      knitr_1.37        
+    [26] fastmap_1.1.0      crosstalk_1.2.0    httpuv_1.6.5       class_7.3-19       fansi_1.0.2       
+    [31] Rcpp_1.0.8.3       KernSmooth_2.23-20 xtable_1.8-4       promises_1.2.0.1   classInt_0.4-3    
+    [36] cachem_1.0.6       jsonlite_1.8.0     mime_0.12          digest_0.6.29      grid_4.1.2        
+    [41] rgdal_1.5-28       cli_3.2.0          tools_4.1.2        sass_0.4.0         magrittr_2.0.3    
+    [46] proxy_0.4-26       tibble_3.1.6       crayon_1.5.0       pkgconfig_2.0.3    ellipsis_0.3.2    
+    [51] data.table_1.14.2  rstudioapi_0.13    rmarkdown_2.13     R6_2.5.1           units_0.8-0       
+    [56] compiler_4.1.2  
