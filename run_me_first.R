@@ -29,32 +29,13 @@ pix_to_distrix = read.csv("pix_to_distrix_nonempty.csv")
 # for including districts)
 
 # read in district shapes for plotting
+# (shapefile not attached to remote repo)
 ind_shp = st_read("districts")
-ind_shp = ind_shp[district_attributes$shp_index,]
-ind_shp = cbind(ind_shp, district_attributes)
-ind_shp = subset(ind_shp, select= -c(District, STATE, REMARKS))
 
-# some example starting threshold values for the app - edit these if you would like
-# to start somewhere different ...
-# jens_thresholds = list(access = 3161,
-#                        hpop = log10(120),
-#                        parasite_rate = 0.001,
-#                        temp_suitability = 0.4,
-#                        spmedian = 0.075,
-#                        spsd = 0.275,
-#                        k13median = 0.03,
-#                        k13sd = 0.05)
-# extreme_thresholds = list(access = maxValue(indapp_covs$access),
-#                           hpop = minValue(indapp_covs$hpop),
-#                           parasite_rate = minValue(indapp_covs$parasite_rate),
-#                           temp_suitability = minValue(indapp_covs$temp_suitability),
-#                           spmedian = minValue(indapp_covs$spmedian),
-#                           spsd = minValue(indapp_covs$spsd),
-#                           k13median = minValue(indapp_covs$k13median),
-#                           k13sd = minValue(indapp_covs$k13sd))
-
-# change this line if you would like to start with different thresholds ...
-# init_thresholds = extreme_thresholds
+ind_shp <- ind_shp[district_attributes$shp_index,] %>%
+  cbind(district_attributes) %>%
+  dplyr::select(-c(District, STATE, REMARKS)) %>%
+  st_simplify(dTolerance = )
 
 ####################
 
@@ -75,30 +56,27 @@ filter_variables = list(access="Accessibility",
                         # pfpc="Pf Percentage",
                         )
 
-# run this if we update the input data for the app:
-# summary plots that end up on the last tab of the app
 
-# read in covariate rasters and transform human pop for visualisation
-# indapp_covs = stack("indapp_covs.grd")
-# indapp_covs$hpop = log10(indapp_covs$hpop+0.01)
-# ind_map = raster("ind_map.grd")
-# indapp_covs$access = 1/(indapp_covs$access + 1)
-# 
+npal <- 100
 # {png("covt_summary_districts.png",
 #     width=2000,
 #     height=2200,
 #     pointsize=50)
-# par(mfrow=c(ceiling(length(filter_variables)/3), 3),
+# par(mfrow=c(3, 3),
 #     mar=c(0.1,0.1,2.1,4.1), bty="n")
-# for (i in 1:length(filter_variables)){
-#   plot(trim(ind_map), col="grey80", legend=F, main=unlist(filter_variables)[i],
-#        xlab="", ylab="", xaxt="n", yaxt="n")
-#   if (i != 2){
-#     plot(ind_shp[names(filter_variables)[i]],
-#          col = viridis(100)[as.numeric(cut(district_attributes[,names(filter_variables)[i]],
-#                                            breaks=100))],
-#          border=NA, add=TRUE)
-#   } else { # special case for hpop because it was logged
+# for (i in 1:1){
+#   var <- names(filter_variables)[i]
+#   plot(trim(ind_map), col="grey80", legend = F, main = filter_variables[var],
+#        xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+#   if (var != "hpop"){
+#     cols <- district_attributes[, var] %>%
+#       cut(breaks = npal) %>%
+#       as.numeric()
+#     plot(st_geometry(ind_shp),
+#          col = viridis(npal)[cols],
+#          border = NA, add = TRUE)
+#   } else { 
+#     # special case for hpop because it was logged
 #     tmp = 10**district_attributes[,names(filter_variables)[i]] - 0.01
 #     plot(ind_shp[names(filter_variables)[i]],
 #          col = viridis(100)[as.numeric(cut(tmp, breaks=100))],
@@ -108,6 +86,20 @@ filter_variables = list(access="Accessibility",
 #   # okay the legend is MIA
 # }
 # dev.off()}
+
+to_plot <- ind_shp %>%
+  pivot_longer(cols = access:k13sd) %>%
+  filter(name %in% names(filter_variables)) %>%
+  mutate(name = unlist(filter_variables[name])) %>%
+  st_as_sf()
+
+ggplot(to_plot) +
+  geom_sf(aes(fill = value)) +
+  facet_wrap(~name) +
+  scale_fill_viridis_c()
+
+ggsave()
+
 # 
 # # ignore warning about NaNs ... comes from logging the logged hpop
 # # should rectify that at some point

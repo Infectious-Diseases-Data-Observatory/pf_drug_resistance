@@ -1,27 +1,34 @@
-# OPEN VERSION
 # script to create district_summary.csv
+# OPEN VERSION - covariate data is not attched to github repo but can be accessed
+# from the referenced sources
+
 
 library(sf)
-library(rgeos)
-library(raster)
+library(terra)
+library(dplyr)
 
 # district shapes
 ind_shp = st_read("districts")
-
+s
 # MAP covariates, model outputs
-ind_covs = stack("indapp_covs.grd")
-ind_covs$hpop = log10(ind_covs$hpop+0.01)
-ind_map = raster("ind_map.grd")
-ind_covs$access = 1/(ind_covs$access + 1)
+ind_covs <- rast("indapp_covs.grd")
+ind_covs$hpop <- log10(ind_covs$hpop + 0.01)
+# accessibility inverted from travel time to cities
+ind_covs$access <- 1/(ind_covs$access + 1)
+ind_map <- rast("ind_map.grd")
 
-# accessibility not inverted from travel time to cities ?
 
 
-district_summarise = function(district, covts, plot=FALSE, site_name="",
-                              plotpath="~/Desktop/pf_ind/output/site_summaries/"){
+district_summarise <- function(district, 
+                              covts, 
+                              plot = FALSE, 
+                              site_name = "",
+                              plotpath = "~/Desktop/pf_ind/output/site_summaries/"){
   # function to summarise surfaces in covts for a give district
   
-  district_covts = trim(mask(covts, district))
+  district_covts = covts %>%
+    mask(district) %>%
+    trim()
   
   if (plot == TRUE){
     # option to summarise with maps and histograms!
@@ -30,18 +37,25 @@ district_summarise = function(district, covts, plot=FALSE, site_name="",
         width = 3000,
         height = 2400,
         pointsize = 30)
-    par(mfrow=n2mfrow(nlayers(district_covts)*2), oma=c(0,0,3,0), mar=c(5.1,4.1,4.1,0.1), bty="n")
-    for (covt in 1:nlayers(district_covts)){
-      plot(district_covts[[covt]], col=viridis(100), main=paste0(names(district_covts)[covt], " map"),
-           xaxt="n", yaxt="n", legend.mar=20, legend.width=1.3)
-      hist(district_covts[[covt]], main=paste0(names(district_covts)[covt], " values"), xlab="", breaks=20)
+    par(mfrow = n2mfrow(nlyr(district_covts)*2), 
+        oma = c(0,0,3,0), mar = c(5.1,4.1,4.1,0.1), bty="n")
+    for (covt in 1:nlyr(district_covts)){
+      plot(district_covts[[covt]], 
+           col = viridis(100), 
+           main = paste0(names(district_covts)[covt], " map"),
+           xaxt = "n", yaxt = "n", 
+           legend.mar = 20, 
+           legend.width = 1.3)
+      hist(district_covts[[covt]], 
+           main = paste0(names(district_covts)[covt], " values"), 
+           xlab = "", breaks = 20)
     }
-    mtext(site_name, outer=TRUE, cex=1.3)
+    mtext(site_name, outer = TRUE, cex = 1.3)
     dev.off()
   }
   
   retlst = list()
-  for (covt in 1:nlayers(district_covts)){
+  for (covt in 1:nlyr(district_covts)){
     # mean of covariate layer in district - MAP covts, model median predictions and sds
     retlst[names(district_covts)[covt]] = mean(values(district_covts[[covt]]), na.rm=TRUE)
     if (grepl("median", names(district_covts)[covt], fixed = TRUE)){
@@ -73,14 +87,20 @@ nonempty_shp = ind_shp
 nonempty_shp = ind_shp[-empty_distrs,]
 
 # summarise non-empty shapes
-district_summary = t(sapply(1:nrow(nonempty_shp), function(x){
-  message(x)
-  district_summarise(nonempty_shp[x,],ind_covs,site_name=nonempty_shp$District[x]) # changed ind_covs to indapp_covs
-}))
+district_summary <- sapply(1:nrow(nonempty_shp), function(x){
+    message(x)
+    district_summarise(nonempty_shp[x,],
+                       ind_covs,
+                       site_name = nonempty_shp$District[x]) 
+    # changed ind_covs to indapp_covs for public version
+  }) %>%
+  t()
 
 
-district_summary = as.data.frame(apply(district_summary,2, unlist))
-district_summary$shp_index = seq(1, nrow(ind_shp))[-empty_distrs]
+district_summary <- district_summary %>%
+  apply(2, unlist) %>%
+  as.data.frame() %>%
+  mutate(shp_index = seq(1, nrow(ind_shp))[-empty_distrs])
 
 states = nonempty_shp$STATE
 states = gsub(">", "A", states)
@@ -93,7 +113,6 @@ districts = gsub("\\|", "I", districts)
 
 district_summary$district = districts
 district_summary$state = states
-
 
 write.csv(subset(district_summary, select=-c(name)), 
           "district_summary.csv", 
