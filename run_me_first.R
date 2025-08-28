@@ -8,13 +8,13 @@ library(markdown)
 library(terra)
 #library(plotfunctions)
 library(sf)
-#library(sortable)
+library(sortable)
 library(cowplot)
 
 
 # table summarising covariates for each district
 # added a column here for product of k13 average and uncertainty
-district_attributes = read.csv("district_summary.csv")
+district_attributes <- read.csv("district_summary.csv")
 # district_attributes$prodk13mediank13sd = district_attributes$k13median * district_attributes$k13sd
 # use shp_index column for district lookup (with reference to the shp object)
 
@@ -25,7 +25,7 @@ district_attributes = read.csv("district_summary.csv")
 #   is the rule used by raster::mask ... I think ...
 #   as a result, some pixels are not included in summaries in district_attributes,
 #   which was created using raster::mask
-pix_to_distrix = read.csv("pix_to_distrix_nonempty.csv")
+pix_to_distrix <- read.csv("pix_to_distrix_nonempty.csv")
 # (this table was more relevant when we were looking at pixel feasibility as a condition
 # for including districts)
 
@@ -37,6 +37,8 @@ ind_shp <- ind_shp[district_attributes$shp_index,] %>%
   cbind(district_attributes) %>%
   dplyr::select(-c(District, STATE, REMARKS)) %>%
   st_simplify(dTolerance = 0.05)
+
+ind_map <- rast("ind_map.grd")
 
 ####################
 
@@ -58,86 +60,55 @@ filter_variables = list(access="Accessibility",
                         )
 
 
-npal <- 100
-# {png("covt_summary_districts.png",
-#     width=2000,
-#     height=2200,
-#     pointsize=50)
-# par(mfrow=c(3, 3),
-#     mar=c(0.1,0.1,2.1,4.1), bty="n")
-# for (i in 1:1){
-#   var <- names(filter_variables)[i]
-#   plot(trim(ind_map), col="grey80", legend = F, main = filter_variables[var],
-#        xlab = "", ylab = "", xaxt = "n", yaxt = "n")
-#   if (var != "hpop"){
-#     cols <- district_attributes[, var] %>%
-#       cut(breaks = npal) %>%
-#       as.numeric()
-#     plot(st_geometry(ind_shp),
-#          col = viridis(npal)[cols],
-#          border = NA, add = TRUE)
-#   } else { 
-#     # special case for hpop because it was logged
-#     tmp = 10**district_attributes[,names(filter_variables)[i]] - 0.01
-#     plot(ind_shp[names(filter_variables)[i]],
-#          col = viridis(100)[as.numeric(cut(tmp, breaks=100))],
-#          border=NA, add=TRUE)
-#   }
+# npal <- 100
 # 
-#   # okay the legend is MIA
-# }
-# dev.off()}
-
-to_plot <- ind_shp %>%
-  pivot_longer(cols = access:k13sd) %>%
-  filter(name %in% names(filter_variables)) %>%
-  mutate(value = ifelse(name == "hpop", 10**(value - 0.01), value)) %>%
-  mutate(name = unlist(filter_variables[name])) %>%
-  st_as_sf()
-
-to_plot %>%
-  split(.$name) %>%
-  map(~ ggplot(., aes(fill = value)) +
-        geom_sf(linewidth = 0.1) +
-        facet_wrap(~name) +
-        scale_fill_viridis_c() +
-        theme_bw() +
-        theme(legend.position = "bottom",
-              legend.title = element_blank(),
-              strip.background = element_blank(),
-              legend.key.width = unit(1, "cm"))) %>%
-  cowplot::plot_grid(plotlist = .)
-
-ggsave("covt_summary_districts.png", height=7.2, width=5, scale = 1.5)
-
+# to_plot <- ind_shp %>%
+#   pivot_longer(cols = access:k13sd) %>%
+#   filter(name %in% names(filter_variables)) %>%
+#   mutate(value = ifelse(name == "hpop", 10**(value - 0.01), value)) %>%
+#   mutate(name = unlist(filter_variables[name])) %>%
+#   st_as_sf()
 # 
-# # ignore warning about NaNs ... comes from logging the logged hpop
-# # should rectify that at some point
-# {png("covt_summary_districts_log.png",
-#     width=2000,
-#     height=2200,
-#     pointsize=50)
-# par(mfrow=c(ceiling(length(filter_variables)/3), 3),
-#     mar=c(0.1,0.1,2.1,4.1), bty="n")
-# for (i in 1:length(filter_variables)){
-#   plot(trim(ind_map), col="grey80", legend=F, main=unlist(filter_variables)[i],
-#        xlab="", ylab="", xaxt="n", yaxt="n")
-#   if (i != 2){
-#     plot(ind_shp[names(filter_variables)[i]],
-#          col = viridis(100)[as.numeric(cut(log10(district_attributes[,names(filter_variables)[i]] + 0.0000000001),
-#                                            breaks=100))],
-#          border=NA, add=TRUE)
-#   } else {
-#     plot(ind_shp[names(filter_variables)[i]],
-#          col = viridis(100)[as.numeric(cut(district_attributes[,names(filter_variables)[i]],
-#                                            breaks=100))],
-#          border=NA, add=TRUE)
-#   }
+# to_plot %>%
+#   split(.$name) %>%
+#   map(~ ggplot(., aes(fill = value)) +
+#         geom_sf(linewidth = 0.1) +
+#         facet_wrap(~name) +
+#         scale_fill_viridis_c() +
+#         theme_bw() +
+#         theme(legend.position = "bottom",
+#               legend.title = element_blank(),
+#               strip.background = element_blank(),
+#               legend.key.width = unit(1, "cm"))) %>%
+#   cowplot::plot_grid(plotlist = .)
 # 
-# }
-# dev.off()}
-
-
+# ggsave("covt_summary_districts.png", height=7.2, width=5, scale = 1.5)
+# 
+# # # ignore warning about NaNs ... comes from logging the logged hpop
+# # # should rectify that at some point
+# 
+# to_plot <- ind_shp %>%
+#   pivot_longer(cols = access:k13sd) %>%
+#   filter(name %in% names(filter_variables)) %>%
+#   mutate(value = ifelse(name != "hpop", log10(value), value)) %>%
+#   mutate(name = unlist(filter_variables[name])) %>%
+#   st_as_sf() %>%
+#   suppressWarnings()
+# 
+# to_plot %>%
+#   split(.$name) %>%
+#   map(~ ggplot(., aes(fill = value)) +
+#         geom_sf(linewidth = 0.1) +
+#         facet_wrap(~name) +
+#         scale_fill_viridis_c() +
+#         theme_bw() +
+#         theme(legend.position = "bottom",
+#               legend.title = element_blank(),
+#               strip.background = element_blank(),
+#               legend.key.width = unit(1, "cm"))) %>%
+#   cowplot::plot_grid(plotlist = .)
+# 
+# ggsave("covt_summary_districts_log.png", height=7.2, width=5, scale = 1.5)
 
 
 

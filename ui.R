@@ -5,16 +5,15 @@ ui <- fluidPage(
   # Application title
   titlePanel("Drug resistance district filtering"),
   
-  # Sidebar with controls to provide a caption, select a dataset, and 
-  # specify the number of observations to view. Note that changes made
-  # to the caption in the textInput control are updated in the output
-  # area immediately as you type
+  # sidebar
   sidebarLayout(
     sidebarPanel(width=3,
+      # here are the filters:
       h3("Filters"),
+      h5("Enter the number of districts to retain for each filter:"),
       uiOutput("filters"),
       
-      # apply changes
+      # button to apply changes to filters:
       actionButton("update", "Update filters"),
       
       br(),
@@ -29,6 +28,7 @@ ui <- fluidPage(
                  includeMarkdown("get_started.md")
         ),
         
+        # tab to drag and drop filters
         tabPanel("Edit Sidebar",
                  br(),
                  fluidRow(
@@ -54,7 +54,7 @@ ui <- fluidPage(
                   )
                 ),
         
-        # grid of maps of different covariate layers, with thresholds applied
+        # tab grid of maps of different covariate layers, with thresholds applied
         tabPanel("Filtering Maps",
                  br(),
                  plotOutput("indiv_filter_plots")
@@ -74,6 +74,7 @@ ui <- fluidPage(
         #          
         # ),
         
+        # extra tab to look at district summaries without filters applied
         tabPanel("All Covariates",
                  br(),
                  checkboxInput("log_covt_plots", "Log the plots!"),

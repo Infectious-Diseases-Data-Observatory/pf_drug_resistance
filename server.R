@@ -11,14 +11,14 @@ server <- (function(input, output, session){
       purrr::map(1:length(input$to_list), function(i) {
         if (length(input$to_list) > 0){
           list(
-            #h2(filter_variables[[var]]), 
             numericInput(
               paste0(input$to_list[i], "_num"), 
-              label = paste0(filter_variables[[input$to_list[i]]], ": number of districts"),
+              label = filter_variables[[input$to_list[i]]],
               min = 1,
               max = nrow(district_attributes),
               value = sidebar_inits[length(input$to_list) - i + 1]
-            ) # not sure if I want to settle with numeric; might install sliders still ...
+            ) 
+            # not sure if I want to settle with numeric; might install sliders still ...
             # extra bits like a slider go in that there list ^
           )
         } else {return()}
@@ -26,18 +26,21 @@ server <- (function(input, output, session){
     }
   )
   
+  
   output$filters <- renderUI({tagList(unlist(filter_tags(), recursive = FALSE))})
   
   # update filter_mat when the button is clicked!
-  filter_mat = reactiveValues(d=data.frame(shp_index=district_attributes$shp_index))
+  filter_mat <- reactiveValues(d = data.frame(shp_index = district_attributes$shp_index))
   
   observeEvent(input$update, {
+    # I don't recall where this warning message was supposed to pop up ..
     validate(need(input$to_list, "Add some filtering variables in the Edit Sidebar tab!"))
     tmp = district_attributes
     filter_mat$d = data.frame(cbind(district_attributes$shp_index,
                                     matrix(0, nrow = nrow(district_attributes),
                                             ncol = length(input$to_list))))
     for (i in 1:length(input$to_list)){
+      # this is a bottleneck
       filter_bottom = min(input[[paste0(input$to_list[i], "_num")]], nrow(tmp))
       # order site IDs by var of interest and remove bottom rows
       tmp = tmp[order(tmp[[input$to_list[i]]], decreasing = TRUE),]
@@ -49,12 +52,15 @@ server <- (function(input, output, session){
   
   
   indiv_filter_plot_height = reactive(
-    return(400*ceiling(length(input$to_list)/2))
+    return(max(100, 400*ceiling(length(input$to_list)/2)))
   )
   
   # filtering plots!
   output$indiv_filter_plots <- renderPlot({
-    validate(need(length(input$to_list) >= 1, "Add some filtering variables in the Edit Sidebar tab!"))
+    message(paste("test", indiv_filter_plot_height()))
+    validate(need(indiv_filter_plot_height() > 100, "Add some filtering variables in the Edit Sidebar tab"))
+    validate(need(length(names(filter_mat$d)) > 1, "Click 'Update filters' to apply filters"))
+    # validate(need(length(input$to_list) >= 1, "Add some filtering variables in the Edit Sidebar tab"))
     par(mfrow = c(ceiling(length(input$to_list)/2), 2))
     old_selected = nrow(filter_mat$d)
     for (i in 1:length(input$to_list)){
@@ -95,9 +101,9 @@ server <- (function(input, output, session){
   output$district_all_covts <- renderImage({
     if (input$log_covt_plots == FALSE){
       message(getwd())
-      list(src="covt_summary_districts.png", width=1200, height=1350)
+      list(src="covt_summary_districts.png", width=1000, height=1350)
     } else {
-      list(src="covt_summary_districts_log.png", width=1200, height=1350)
+      list(src="covt_summary_districts_log.png", width=1000, height=1350)
     }
   }, deleteFile=FALSE)
   
