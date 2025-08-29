@@ -3,7 +3,7 @@
 library(shiny)
 library(viridisLite)
 library(tidyverse)
-#library(DT)
+library(DT)
 library(markdown)
 library(terra)
 #library(plotfunctions)

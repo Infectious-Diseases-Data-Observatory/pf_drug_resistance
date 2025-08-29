@@ -1,0 +1,8 @@
+TODO
+- fancy up individual filtering maps
+  - nice labels
+- filters stop giving inputs after 200?
+- grey legend for logged static plots
+- leaflet tab:
+  - reactive to filters applied
+  - reactive labels? maybe a checkbox?

@@ -2,7 +2,7 @@
 
 server <- (function(input, output, session){
   
-  sidebar_inits <- c(25,50,75,100,150,200)
+  sidebar_inits <- c(25,50,75,100,150,200,250,300)
   
   # sidebar inputs:
   filter_tags <- eventReactive(
@@ -46,38 +46,49 @@ server <- (function(input, output, session){
       tmp = tmp[order(tmp[[input$to_list[i]]], decreasing = TRUE),]
       tmp = tmp[1: filter_bottom,]
       # edit filter mat
-      filter_mat$d[which(filter_mat$d[,1] %in% tmp$shp_index), i+1] = 1
+      filter_mat$d[which(filter_mat$d[, 1] %in% tmp$shp_index), i+1] = 1
     }
+    
+    names(filter_mat$d) <- c("idx", input$to_list)
+    
   })
   
   
   indiv_filter_plot_height = reactive(
-    return(max(100, 400*ceiling(length(input$to_list)/2)))
+    return(max(100, ifelse(length(input$to_list) < 5,
+                           400*ceiling(length(input$to_list)/2),
+                           400*ceiling(length(input$to_list)/3))))
   )
   
   # filtering plots!
   output$indiv_filter_plots <- renderPlot({
-    message(paste("test", indiv_filter_plot_height()))
     validate(need(indiv_filter_plot_height() > 100, "Add some filtering variables in the Edit Sidebar tab"))
     validate(need(length(names(filter_mat$d)) > 1, "Click 'Update filters' to apply filters"))
-    # validate(need(length(input$to_list) >= 1, "Add some filtering variables in the Edit Sidebar tab"))
-    par(mfrow = c(ceiling(length(input$to_list)/2), 2))
-    old_selected = nrow(filter_mat$d)
-    for (i in 1:length(input$to_list)){
-      select_indices = filter_mat$d[which(filter_mat$d[,i+1] == 1), 1] # grabs shp_index column
-      if (old_selected > length(select_indices)){
-        par(bty="n", mar=c(0.1,0.1,4.1,0.1))
-        plot(ind_map, xlab="", ylab="", xaxt="n", yaxt="n",
-             main = paste0("Filter ", i, " - ", filter_variables[[input$to_list[i]]]),
-             legend = FALSE, col="grey90", cex.main=1.5)
-        plot(ind_shp[ind_shp$shp_index %in% select_indices, input$to_list[i]], add = TRUE,
-             col = viridis(10)[as.numeric(cut(district_attributes[which(district_attributes$shp_index %in% select_indices), 
-                                                                  input$to_list[i]],
-                                              breaks=10))],
-             border=NA)
-        old_selected=length(select_indices)
-      }
-    }
+    # there has to be a ggplot way of doing this ...
+    
+    fmat <- filter_mat$d %>%
+      pivot_longer(cols = unlist(input$to_list),
+                   names_to = "name",
+                   values_to = "value") %>%
+      filter(value == 1) %>%
+      left_join(ind_shp, by = join_by(idx == shp_index)) %>%
+      split(.$name)
+    
+    plots <- lapply(input$to_list, function(col){
+      ggplot() +
+        geom_sf(data = st_as_sf(ind_outline)) +
+        geom_sf(data = fmat[[col]] %>% st_as_sf(),
+                mapping = aes(fill = fmat[[col]][[col]]),
+                linewidth = 0.1) +
+        scale_fill_viridis_c(name = col) +
+        theme_bw() +
+        theme(legend.position = "bottom",
+              strip.background = element_blank(),
+              legend.key.width = unit(1, "cm"))
+    })
+    message(indiv_filter_plot_height())
+    cowplot::plot_grid(plotlist = plots)
+    
   }, width=800, height=function() indiv_filter_plot_height()) 
   # height is reactive to number of filters
   
