@@ -1,7 +1,6 @@
 TODO
-- fancy up individual filtering maps
-  - nice labels
-- filters stop giving inputs after 200?
+- simplified and non-simplified versions of ind_shp - leaflet needs full detail polys but static plots fine with simplified versions
+- make leaflet height dynamic?
 - grey legend for logged static plots
 - leaflet tab:
   - reactive to filters applied

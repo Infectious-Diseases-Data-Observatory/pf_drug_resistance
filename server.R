@@ -74,19 +74,20 @@ server <- (function(input, output, session){
       left_join(ind_shp, by = join_by(idx == shp_index)) %>%
       split(.$name)
     
+    i <- 1
     plots <- lapply(input$to_list, function(col){
       ggplot() +
         geom_sf(data = st_as_sf(ind_outline)) +
         geom_sf(data = fmat[[col]] %>% st_as_sf(),
                 mapping = aes(fill = fmat[[col]][[col]]),
                 linewidth = 0.1) +
-        scale_fill_viridis_c(name = col) +
+        scale_fill_viridis_c(name = "") +
         theme_bw() +
         theme(legend.position = "bottom",
               strip.background = element_blank(),
-              legend.key.width = unit(1, "cm"))
+              legend.key.width = unit(1, "cm")) +
+        labs(title = paste0("Filter ", i, ":\n", filter_variables[[col]]))
     })
-    message(indiv_filter_plot_height())
     cowplot::plot_grid(plotlist = plots)
     
   }, width=800, height=function() indiv_filter_plot_height()) 
@@ -118,10 +119,47 @@ server <- (function(input, output, session){
     }
   }, deleteFile=FALSE)
   
-  output$download_districts = downloadHandler(
+  output$download_districts <- downloadHandler(
     filename = function(){"ranked_districts.csv"},
     content = function(fname){
       write.csv(ranked_districts$d, fname, row.names = FALSE)
     }
   )
+  
+  output$leaflet <- renderLeaflet({
+    # applying the same checks as for the individual filtering plots
+    validate(need(indiv_filter_plot_height() > 100, "Add some filtering variables in the Edit Sidebar tab"))
+    validate(need(length(names(filter_mat$d)) > 1, "Click 'Update filters' to apply filters"))
+    
+    polys_to_show <- filter_mat$d %>%
+      rename(final = ncol(filter_mat$d)) %>%
+      dplyr::select(idx, final) %>%
+      filter(final == 1) %>%
+      left_join(ind_shp, by = join_by(idx == shp_index))
+    
+    message(nrow(polys_to_show))
+    
+    # drop polyg geometry and reset to polyg centroid
+    # probably a simpler way to get at this ...
+    pts_to_show <- polys_to_show %>%
+      st_drop_geometry() %>%
+      st_as_sf(coords = c("lon_centroid", "lat_centroid"), crs = 4326) %>%
+      mutate(summary = pmap_chr(across(input$to_list), ~ {
+        cols <- names(across(input$to_list))
+        vals <- list(...)
+        paste(cols, round(as.numeric(vals), 3), sep = ": ", collapse = ", </br>")
+      }),
+      summary = paste0("<strong>", district, ",</strong> ", state, "</br>", summary))
+    
+    
+    leaflet() %>%
+      addTiles() %>%
+      setView(80, 21, zoom = 4) %>%
+      addPolygons(data = polys_to_show %>% st_as_sf(),
+                  color = "orange",
+                  fillOpacity = 0.3) %>%
+      addMarkers(data = pts_to_show,
+                 label = ~summary %>%
+                   lapply(htmltools::HTML))
+  })
 })

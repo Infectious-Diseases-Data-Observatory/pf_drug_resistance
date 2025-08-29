@@ -60,6 +60,10 @@ ui <- fluidPage(
                  plotOutput("indiv_filter_plots")
                 ),
         
+        tabPanel("Inspect districts",
+                 br(),
+                 leafletOutput("leaflet", height = 1000)),
+        
         # aggregate thresholding in indiv_cov_maps tab
         tabPanel("Filtering Table",
                  br(),
