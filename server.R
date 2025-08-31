@@ -74,8 +74,10 @@ server <- (function(input, output, session){
       left_join(ind_shp, by = join_by(idx == shp_index)) %>%
       split(.$name)
     
-    i <- 1
+    i <- 0
     plots <- lapply(input$to_list, function(col){
+      i <<- i + 1 # TIL how global vars work in R ?
+      message(i)
       ggplot() +
         geom_sf(data = st_as_sf(ind_outline)) +
         geom_sf(data = fmat[[col]] %>% st_as_sf(),
@@ -87,6 +89,7 @@ server <- (function(input, output, session){
               strip.background = element_blank(),
               legend.key.width = unit(1, "cm")) +
         labs(title = paste0("Filter ", i, ":\n", filter_variables[[col]]))
+      
     })
     cowplot::plot_grid(plotlist = plots)
     
@@ -156,10 +159,12 @@ server <- (function(input, output, session){
       addTiles() %>%
       setView(80, 21, zoom = 4) %>%
       addPolygons(data = polys_to_show %>% st_as_sf(),
-                  color = "orange",
+                  color = "#14B1E7",
                   fillOpacity = 0.3) %>%
       addMarkers(data = pts_to_show,
                  label = ~summary %>%
                    lapply(htmltools::HTML))
   })
 })
+
+
