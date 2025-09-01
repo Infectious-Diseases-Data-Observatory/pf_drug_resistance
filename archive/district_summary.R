@@ -1,4 +1,7 @@
 # script to create district_summary.csv
+# OPEN VERSION - covariate data is not attched to github repo but can be accessed
+# from the referenced sources
+
 
 library(sf)
 library(terra)
@@ -14,11 +17,13 @@ ind_covs$hpop <- log10(ind_covs$hpop + 0.01)
 ind_covs$access <- 1/(ind_covs$access + 1)
 ind_map <- rast("ind_map.grd")
 
+
+
 district_summarise <- function(district, 
-                               covts, 
-                               plot = FALSE, 
-                               site_name = "",
-                               plotpath = ""){
+                              covts, 
+                              plot = FALSE, 
+                              site_name = "",
+                              plotpath = ""){
   # function to summarise surfaces in covts for a give district
   
   district_covts = covts %>%
@@ -68,7 +73,7 @@ district_summarise <- function(district,
   # centroid = st_coordinates(st_centroid(district))
   # retlst$lon_centroid = centroid[1]
   # retlst$lat_centroid = centroid[2]
-  tmp = ext(district)
+  tmp = extent(district)
   retlst$lon_centroid = (tmp[2] + tmp[1])/2
   retlst$lat_centroid = (tmp[4] + tmp[3])/2
   
@@ -76,19 +81,19 @@ district_summarise <- function(district,
 }
 
 # expect 734 non-empty shps - the empty ones are often disputed areas, etc.
-# see seld_shps.R for the skeleton of how I worked this out
+# see seld_sites.R for the skeleton of how I worked this out
 empty_distrs = c(13,19,69,186,239,291,315,707,708,710)
 nonempty_shp = ind_shp
 nonempty_shp = ind_shp[-empty_distrs,]
 
 # summarise non-empty shapes
 district_summary <- sapply(1:nrow(nonempty_shp), function(x){
-  message(x)
-  district_summarise(nonempty_shp[x,],
-                     ind_covs,
-                     site_name = nonempty_shp$District[x]) 
-  # changed ind_covs to indapp_covs for public version
-}) %>%
+    message(x)
+    district_summarise(nonempty_shp[x,],
+                       ind_covs,
+                       site_name = nonempty_shp$District[x]) 
+    # changed ind_covs to indapp_covs for public version
+  }) %>%
   t()
 
 
@@ -109,40 +114,44 @@ districts = gsub("\\|", "I", districts)
 district_summary$district = districts
 district_summary$state = states
 
-write.csv(district_summary, "district_summary.csv", row.names=FALSE)
+write.csv(subset(district_summary, select=-c(name)), 
+          "district_summary.csv", 
+          row.names=FALSE)
 
-################################################################################
-# here's the bit involving NMCP data:
-# read in Pf case data:
-pf_case = read.csv("districts_pf_2018.csv")
-pf_case = pf_case[-which(pf_case$District == "MAHE"),] # Mahe ended up excluded earlier .. too small
 
-# extend district_attributes table
-tmp = names(district_summary)
-district_summary = cbind(district_summary,
-                            matrix(NA, nrow=nrow(district_summary), ncol=5))
-names(district_summary) = c(tmp, "pfpc", "api", "afi", "spr", "sfr")
-
-# there are some duplicated district names across different states
-# (i.e. not true duplicates, but require an additional joining column)
-duplicated_district_names = unique(c(pf_case$District[duplicated(pf_case$District)],
-                              district_summary$district[duplicated(district_summary$district)]))
-# perform the join
-tab_link = sapply(1:nrow(pf_case), function(i){
-  if (pf_case$District[i] %in% duplicated_district_names){
-    message(i)
-    return(which(district_summary$district == pf_case$District[i] & district_summary$state == toupper(pf_case$State[i])))
-  }
-  else {return(which(district_summary$district == pf_case$District[i]))}
-})
-
-# fill out our new columns in district_summary
-district_summary[unlist(tab_link),
-                    c("pfpc", "api", "afi", "spr", "sfr")] = pf_case[, c("PFpc", "API", "AFI", "SPR", "SFR")]
-
-# and write!
-district_summary = district_summary[,-which(names(district_summary) == "name")]
-write.csv(district_summary, "district_summary.csv", row.names=FALSE)
+# removing this step as data is not to be released:
+# # read in Pf case data:
+# pf_case = read.csv("districts_pf_2018.csv")
+# pf_case = pf_case[-which(pf_case$District == "MAHE"),] # Mahe ended up excluded earlier .. too small
+# 
+# # extend district_attributes table
+# tmp = names(district_summary)
+# district_summary = cbind(district_summary,
+#                             matrix(NA, nrow=nrow(district_summary), ncol=5))
+# names(district_summary) = c(tmp, "pfpc", "api", "afi", "spr", "sfr")
+# 
+# 
+# # there are some duplicated district names across different states
+# # (i.e. not true duplicates, but require an additional joining column)
+# duplicated_district_names = unique(c(pf_case$District[duplicated(pf_case$District)],
+#                               district_summary$district[duplicated(district_summary$district)]))
+# 
+# # perform the join
+# tab_link = sapply(1:nrow(pf_case), function(i){
+#   if (pf_case$District[i] %in% duplicated_district_names){
+#     message(i)
+#     return(which(district_summary$district == pf_case$District[i] & district_summary$state == toupper(pf_case$State[i])))
+#   }
+#   else {return(which(district_summary$district == pf_case$District[i]))}
+# })
+# 
+# # fill out our new columns in district_summary
+# district_summary[unlist(tab_link),
+#                     c("pfpc", "api", "afi", "spr", "sfr")] = pf_case[, c("PFpc", "API", "AFI", "SPR", "SFR")]
+# 
+# # and write!
+# district_summary = district_summary[,-which(names(district_summary) == "name")]
+# write.csv(district_summary, "district_summary.csv", row.names=FALSE)
 
 
 

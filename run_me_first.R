@@ -10,6 +10,7 @@ library(terra)
 library(sf)
 library(sortable)
 library(cowplot)
+library(leaflet)
 
 
 # table summarising covariates for each district
@@ -39,6 +40,8 @@ ind_shp <- ind_shp[district_attributes$shp_index,] %>%
   st_simplify(dTolerance = 0.05)
 
 ind_map <- rast("ind_map.grd")
+
+ind_outline <- as.polygons(ind_map)
 
 ####################
 
