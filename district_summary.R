@@ -1,4 +1,5 @@
 # script to create district_summary.csv
+# publish national data alongside? need to confirm?
 
 library(sf)
 library(terra)

@@ -53,13 +53,13 @@ filter_variables = list(access="Accessibility",
                         spmedian="dhps Median",
                         spsd="dhps SD",
                         k13median="kelch13 Median",
-                        k13sd="kelch13 SD"
+                        k13sd="kelch13 SD",
                         # (removing data not to be released)
-                        # api="Annual Parasite Index",
-                        # afi="Annual Falciparum Index",
-                        # spr="Slide Positivity Rate",
-                        # sfr="Slide Pf Rate",
-                        # pfpc="Pf Percentage",
+                        api="Annual Parasite Index",
+                        afi="Annual Falciparum Index",
+                        spr="Slide Positivity Rate",
+                        sfr="Slide Pf Rate",
+                        pfpc="Pf Percentage"
                         )
 
 

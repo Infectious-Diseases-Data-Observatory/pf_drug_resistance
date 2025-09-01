@@ -1,14 +1,21 @@
 TODO
 - simplified and non-simplified versions of ind_shp 
   - leaflet needs full detail polys but static plots fine with simplified versions
-- grey legend for logged static plots
+- static plots 
+  - remake with extra variables
+  - grey legends 
+    (now there are two greys happening - NA and not supplied)
+    (also need these in indiv filter plots)
 - leaflet tab:
   - nice names in popups
   - Perhaps a "show all districts" checkbox?
 - DATA - talk to JF and re-read MS ...
-  - I don't recall what all of the other fields were? How did we do states in the end?
+  - I don't recall what all of the other fields were? 
+  - How did we do states in the end?
   - (Would there be tie-breaking with states? I don't recall how I did that?)
   - Which year are the surfaces in the app? Are the same as the ones in the paper?
+    - theoretically have updated - double check
+  - the model outputs don't look right .. k13 should be highest in the northeast ???
 - revise README and LANDING PAGE OF APP:
   - workflow - only cover bits in app/MS
   - data 
@@ -17,4 +24,5 @@ TODO
 - links for app/repo - talk to RP:
   - ... fork to IDDO GH for repo?
   - ... common IDDO login to shinyapps.io? (rsconnect)
+- autopopulate filters with nrow(district_attributes)
 

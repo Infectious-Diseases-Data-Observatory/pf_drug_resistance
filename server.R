@@ -2,7 +2,7 @@
 
 server <- (function(input, output, session){
   
-  sidebar_inits <- c(25,50,75,100,150,200,250,300)
+  sidebar_inits <- c(c(25,50,75), seq(100,700,100))
   
   # sidebar inputs:
   filter_tags <- eventReactive(
