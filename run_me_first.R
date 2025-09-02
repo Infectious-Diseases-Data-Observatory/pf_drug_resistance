@@ -55,65 +55,66 @@ filter_variables = list(access="Accessibility",
                         spmedian="dhps Median",
                         spsd="dhps SD",
                         k13median="kelch13 Median",
-                        k13sd="kelch13 SD",
+                        k13sd="kelch13 SD"#,
                         # (removing data not to be released)
-                        api="Annual Parasite Index",
-                        afi="Annual Falciparum Index",
-                        spr="Slide Positivity Rate",
-                        sfr="Slide Pf Rate",
-                        pfpc="Pf Percentage"
+                        # api="Annual Parasite Index",
+                        # afi="Annual Falciparum Index",
+                        # spr="Slide Positivity Rate",
+                        # sfr="Slide Pf Rate",
+                        # pfpc="Pf Percentage"
                         )
 
 
-# npal <- 100
-# 
-# to_plot <- ind_shp %>%
-#   pivot_longer(cols = access:k13sd) %>%
-#   filter(name %in% names(filter_variables)) %>%
-#   mutate(value = ifelse(name == "hpop", 10**(value - 0.01), value)) %>%
-#   mutate(name = unlist(filter_variables[name])) %>%
-#   st_as_sf()
-# 
-# to_plot %>%
-#   split(.$name) %>%
-#   map(~ ggplot(., aes(fill = value)) +
-#         geom_sf(linewidth = 0.1) +
-#         facet_wrap(~name) +
-#         scale_fill_viridis_c() +
-#         theme_bw() +
-#         theme(legend.position = "bottom",
-#               legend.title = element_blank(),
-#               strip.background = element_blank(),
-#               legend.key.width = unit(1, "cm"))) %>%
-#   cowplot::plot_grid(plotlist = .)
-# 
-# ggsave("covt_summary_districts.png", height=7.2, width=5, scale = 1.5)
-# 
-# # # ignore warning about NaNs ... comes from logging the logged hpop
-# # # should rectify that at some point
-# 
-# to_plot <- ind_shp %>%
-#   pivot_longer(cols = access:k13sd) %>%
-#   filter(name %in% names(filter_variables)) %>%
-#   mutate(value = ifelse(name != "hpop", log10(value), value)) %>%
-#   mutate(name = unlist(filter_variables[name])) %>%
-#   st_as_sf() %>%
-#   suppressWarnings()
-# 
-# to_plot %>%
-#   split(.$name) %>%
-#   map(~ ggplot(., aes(fill = value)) +
-#         geom_sf(linewidth = 0.1) +
-#         facet_wrap(~name) +
-#         scale_fill_viridis_c() +
-#         theme_bw() +
-#         theme(legend.position = "bottom",
-#               legend.title = element_blank(),
-#               strip.background = element_blank(),
-#               legend.key.width = unit(1, "cm"))) %>%
-#   cowplot::plot_grid(plotlist = .)
-# 
-# ggsave("covt_summary_districts_log.png", height=7.2, width=5, scale = 1.5)
+npal <- 100
+
+to_plot <- ind_shp_simp %>%
+  dplyr::select(-c(npixel:state)) %>%
+  pivot_longer(cols = access:k13sd) %>%
+  filter(name %in% names(filter_variables)) %>%
+  mutate(value = ifelse(name == "hpop", 10**(value - 0.01), value)) %>%
+  mutate(name = unlist(filter_variables[name])) %>%
+  st_as_sf()
+
+to_plot %>%
+  split(.$name) %>%
+  map(~ ggplot(., aes(fill = value)) +
+        geom_sf(linewidth = 0.1) +
+        facet_wrap(~name) +
+        scale_fill_viridis_c() +
+        theme_bw() +
+        theme(legend.position = "bottom",
+              legend.title = element_blank(),
+              strip.background = element_blank(),
+              legend.key.width = unit(1, "cm"))) %>%
+  cowplot::plot_grid(plotlist = .)
+
+ggsave("covt_summary_districts.png", height=7.2, width=5, scale = 1.5)
+
+# # ignore warning about NaNs ... comes from logging the logged hpop
+# # should rectify that at some point
+
+to_plot <- ind_shp_simp %>%
+  pivot_longer(cols = access:k13sd) %>%
+  filter(name %in% names(filter_variables)) %>%
+  mutate(value = ifelse(name != "hpop", log10(value), value)) %>%
+  mutate(name = unlist(filter_variables[name])) %>%
+  st_as_sf() %>%
+  suppressWarnings()
+
+to_plot %>%
+  split(.$name) %>%
+  map(~ ggplot(., aes(fill = value)) +
+        geom_sf(linewidth = 0.1) +
+        facet_wrap(~name) +
+        scale_fill_viridis_c() +
+        theme_bw() +
+        theme(legend.position = "bottom",
+              legend.title = element_blank(),
+              strip.background = element_blank(),
+              legend.key.width = unit(1, "cm"))) %>%
+  cowplot::plot_grid(plotlist = .)
+
+ggsave("covt_summary_districts_log.png", height=7.2, width=5, scale = 1.5)
 
 
 

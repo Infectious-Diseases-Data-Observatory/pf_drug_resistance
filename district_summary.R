@@ -110,40 +110,43 @@ districts = gsub("\\|", "I", districts)
 district_summary$district = districts
 district_summary$state = states
 
-write.csv(district_summary, "district_summary.csv", row.names=FALSE)
+names(district_summary)
+
+write.csv(district_summary %>%
+            dplyr::select(-c(name)), "district_summary.csv", row.names=FALSE)
 
 ################################################################################
 # here's the bit involving NMCP data:
 # read in Pf case data:
-pf_case = read.csv("districts_pf_2018.csv")
-pf_case = pf_case[-which(pf_case$District == "MAHE"),] # Mahe ended up excluded earlier .. too small
-
-# extend district_attributes table
-tmp = names(district_summary)
-district_summary = cbind(district_summary,
-                            matrix(NA, nrow=nrow(district_summary), ncol=5))
-names(district_summary) = c(tmp, "pfpc", "api", "afi", "spr", "sfr")
-
-# there are some duplicated district names across different states
-# (i.e. not true duplicates, but require an additional joining column)
-duplicated_district_names = unique(c(pf_case$District[duplicated(pf_case$District)],
-                              district_summary$district[duplicated(district_summary$district)]))
-# perform the join
-tab_link = sapply(1:nrow(pf_case), function(i){
-  if (pf_case$District[i] %in% duplicated_district_names){
-    message(i)
-    return(which(district_summary$district == pf_case$District[i] & district_summary$state == toupper(pf_case$State[i])))
-  }
-  else {return(which(district_summary$district == pf_case$District[i]))}
-})
-
-# fill out our new columns in district_summary
-district_summary[unlist(tab_link),
-                    c("pfpc", "api", "afi", "spr", "sfr")] = pf_case[, c("PFpc", "API", "AFI", "SPR", "SFR")]
-
-# and write!
-district_summary = district_summary[,-which(names(district_summary) == "name")]
-write.csv(district_summary, "district_summary.csv", row.names=FALSE)
+# pf_case = read.csv("districts_pf_2018.csv")
+# pf_case = pf_case[-which(pf_case$District == "MAHE"),] # Mahe ended up excluded earlier .. too small
+# 
+# # extend district_attributes table
+# tmp = names(district_summary)
+# district_summary = cbind(district_summary,
+#                             matrix(NA, nrow=nrow(district_summary), ncol=5))
+# names(district_summary) = c(tmp, "pfpc", "api", "afi", "spr", "sfr")
+# 
+# # there are some duplicated district names across different states
+# # (i.e. not true duplicates, but require an additional joining column)
+# duplicated_district_names = unique(c(pf_case$District[duplicated(pf_case$District)],
+#                               district_summary$district[duplicated(district_summary$district)]))
+# # perform the join
+# tab_link = sapply(1:nrow(pf_case), function(i){
+#   if (pf_case$District[i] %in% duplicated_district_names){
+#     message(i)
+#     return(which(district_summary$district == pf_case$District[i] & district_summary$state == toupper(pf_case$State[i])))
+#   }
+#   else {return(which(district_summary$district == pf_case$District[i]))}
+# })
+# 
+# # fill out our new columns in district_summary
+# district_summary[unlist(tab_link),
+#                     c("pfpc", "api", "afi", "spr", "sfr")] = pf_case[, c("PFpc", "API", "AFI", "SPR", "SFR")]
+# 
+# # and write!
+# district_summary = district_summary[,-which(names(district_summary) == "name")]
+# write.csv(district_summary, "district_summary.csv", row.names=FALSE)
 
 
 

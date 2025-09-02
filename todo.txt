@@ -1,6 +1,4 @@
 TODO
-- simplified and non-simplified versions of ind_shp 
-  - leaflet needs full detail polys but static plots fine with simplified versions
 - static plots 
   - remake with extra variables
   - grey legends 

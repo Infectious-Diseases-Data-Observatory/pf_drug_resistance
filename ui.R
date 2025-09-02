@@ -3,7 +3,7 @@
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Drug resistance district filtering"),
+  titlePanel("Pf molecular surveillance district filtering"),
   
   # sidebar
   sidebarLayout(
@@ -60,7 +60,7 @@ ui <- fluidPage(
                  plotOutput("indiv_filter_plots")
                 ),
         
-        tabPanel("Inspect districts",
+        tabPanel("Inspect Districts",
                  br(),
                  leafletOutput("leaflet", height = 1000)),
         
