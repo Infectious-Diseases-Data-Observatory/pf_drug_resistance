@@ -33,10 +33,12 @@ pix_to_distrix <- read.csv("pix_to_distrix_nonempty.csv")
 # read in district shapes for plotting
 # (shapefile not attached to remote repo)
 sf_use_s2(FALSE)
-ind_shp = st_read("districts")
+ind_shp <- st_read("districts")
 ind_shp <- ind_shp[district_attributes$shp_index,] %>%
   cbind(district_attributes) %>%
-  dplyr::select(-c(District, STATE, REMARKS)) %>%
+  dplyr::select(-c(District, STATE, REMARKS))
+
+ind_shp_simp <- ind_shp %>%
   st_simplify(dTolerance = 0.05)
 
 ind_map <- rast("ind_map.grd")

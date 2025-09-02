@@ -71,7 +71,7 @@ server <- (function(input, output, session){
                    names_to = "name",
                    values_to = "value") %>%
       filter(value == 1) %>%
-      left_join(ind_shp, by = join_by(idx == shp_index)) %>%
+      left_join(ind_shp_simp, by = join_by(idx == shp_index)) %>%
       split(.$name)
     
     i <- 0
