@@ -1,0 +1,21 @@
+[general]
+[data]
+datatype=FLT4S
+nodatavalue=nan
+byteorder=little
+nbands=8
+bandorder=BIL
+minvalue=-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19
+maxvalue=3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19
+categorical=FALSE
+[description]
+layername=PopulationIndia:Resistance_median_2021_dhps540:Resistance_median_2021_K13:Resistance_sd_2021_dhps540:Resistance_sd_2021_K13:Proportion of Children 2 to 10 years of age showing, on a given year, detectable Plasmodium falciparum parasite 2000-2022-2021:Plasmodium falciparum Temperature Suitability:Travel Time to Cities
+[georeference]
+nrows=728
+ncols=702
+xmin=68.1665920499997213
+ymin=6.74997526699984007
+xmax=97.4165803499970906
+ymax=37.0832964669971119
+projection=+proj=longlat +datum=WGS84 +no_defs
+wkt=GEOGCRS["WGS 84 (CRS84)",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic longitude (Lon)",east,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic latitude (Lat)",north,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["unknown"],AREA["World"],BBOX[-90,-180,90,180]],ID["OGC","CRS84"]]
