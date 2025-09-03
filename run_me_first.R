@@ -50,12 +50,12 @@ ind_outline <- as.polygons(ind_map)
 # lookup list for variables involved in filtering
 filter_variables = list(access="Accessibility",
                         hpop="Human Population Density",
-                        temp_suitability="Pf Temperature Suitability",
-                        parasite_rate="Pf Parasite Rate",
-                        spmedian="dhps Median",
-                        spsd="dhps SD",
-                        k13median="kelch13 Median",
-                        k13sd="kelch13 SD"#,
+                        temp_suit="Pf Temperature Suitability",
+                        pfpr="Pf Parasite Rate",
+                        dhps_median="dhps540E Median",
+                        dhps_sd="dhps540E SD",
+                        k13_median="kelch13 Median",
+                        k13_sd="kelch13 SD"#,
                         # (removing data not to be released)
                         # api="Annual Parasite Index",
                         # afi="Annual Falciparum Index",
@@ -68,8 +68,8 @@ filter_variables = list(access="Accessibility",
 npal <- 100
 
 to_plot <- ind_shp_simp %>%
-  dplyr::select(-c(npixel:state)) %>%
-  pivot_longer(cols = access:k13sd) %>%
+  #dplyr::select(-c(npixel:state)) %>%
+  pivot_longer(cols = hpop:access) %>%
   filter(name %in% names(filter_variables)) %>%
   mutate(value = ifelse(name == "hpop", 10**(value - 0.01), value)) %>%
   mutate(name = unlist(filter_variables[name])) %>%
@@ -94,7 +94,7 @@ ggsave("covt_summary_districts.png", height=7.2, width=5, scale = 1.5)
 # # should rectify that at some point
 
 to_plot <- ind_shp_simp %>%
-  pivot_longer(cols = access:k13sd) %>%
+  pivot_longer(cols = hpop:access) %>%
   filter(name %in% names(filter_variables)) %>%
   mutate(value = ifelse(name != "hpop", log10(value), value)) %>%
   mutate(name = unlist(filter_variables[name])) %>%
