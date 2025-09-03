@@ -1,11 +1,9 @@
 TODO
 - static plots 
-  - remake with extra variables
   - grey legends 
-    (now there are two greys happening - NA and not supplied)
     (also need these in indiv filter plots)
 - leaflet tab:
-  - nice names in popups
+  - nice names in popups nah they're nice enough
   - Perhaps a "show all districts" checkbox?
 - DATA - talk to JF and re-read MS ...
   - the fields are labelled wrong in the covt_summary plots?

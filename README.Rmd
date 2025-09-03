@@ -8,15 +8,17 @@ output: github_document
 ### Site selection workflow
 
 1. Start with all districts in India
-2. Districts selected: Districts are filtered and ranked by Pf case data and modelling outputs (*extent of current app*)
-3. Feasible pixels: Pixels are excluded based on thresholds of feasibility in covariates, not implemented in this app
-4. PHCs in top districts selected: based on further feasibility/convenience, not implemented in this app
+2. Districts are filtered and ranked by modelling outputs + other relevant epidemiological covariates
+3. Shortlisted districts are grouped into transmission (low, medium, high) using national state-level data, and districts are selected from each group based on local transmission and infrastructure for surveillance (*not implemented in app*)
 
 ### How to use the tool
 
 - To operate the application, navigate to the Edit Sidebar tab. Drag filtering covariates from left to right, and edit the order of covariates if needed. Set the number of districts to be retained by each filter once it appears in the sidebar at far left.
 
-- Press the **"Update filters"** button to see your preferences reflected in the Filtering Maps and Filtering Table tabs. The filters are visualised in sequence in the Filtering Maps tab and the final set of districts are downloadable from the Filtering Table tab.
+- Press the **"Update filters"** button to see your preferences reflected in the Filtering Maps, Inspect Districts, and Filtering Table tabs:
+  - The filters are visualised in sequence in the Filtering Maps tab. 
+  - The shortlisted districts are visualised in a scrollable map in the Inspect Districts tab, and 
+  - The final set of districts are downloadable from the Filtering Table tab.
 
 - To view all available filtering covariates, summarised by district, navigate to the All Covariates tab. Log-transfrom the covariates if needed.
 
@@ -41,26 +43,27 @@ This is a predictive map showing the estimated time to travel (in minutes) from 
 WorldPop program provides high resolution, open and contemporary data on human population distributions.  \
 https://www.worldpop.org/methods/populations
 
-- **dhps540E predicted resistance, YEAR**  \
+- **dhps540E predicted resistance, 2021**  \
 Predicted median estimated prevalence of the dhp540E marker. 
 
-- **dhps540E predicted resistance (uncertainty), YEAR**  \
+- **dhps540E predicted resistance (uncertainty), 2021**  \
 Standard deviate of the estimated prevalence of the dhp540E marker. 
 
-- **kelch13 predicted resistance, YEAR**  \
+- **kelch13 predicted resistance, 2021**  \
 Predicted median estimated prevalence of kelch13 markers (any markers, ie not wildtype). 
 
-- **kelch13 predicted resistance (uncertainty), YEAR**  \
+- **kelch13 predicted resistance (uncertainty), 2021**  \
 Standard deviate of the estimated prevalence of kelch13 markers (any markers, ie not wildtype). 
 
 ### Data summarisation
 
-Covariate data are summarised for each district in `district_summary.csv`. For accessibility, human population density, Pf parasite rate and Pf temperature suitability, these summaries are the mean value of the dataset within the raster masked by the district boundary. For model outputs, the mean of both the median model prediction and model uncertainty are provided, as well as the standard deviation of median model predictions (where the former is an average of between-prediction uncertainty, and the latter is the a measure of variation in median predictions across a district). There are the columns `k13median`, `k13mediansd`, `k13sd`. `k13median` and `k13sd` are means of the median prediction and standard deviation of the k13 model in the district, respectively, while `k13mediansd` is the standard deviation of model median predictions.
+Covariate data are summarised for each district in `district_summary.csv`. For accessibility, human population density, Pf parasite rate and Pf temperature suitability, these summaries are the mean value of the dataset within the raster masked by the district boundary. For model outputs, the mean of both the median model prediction and model uncertainty are provided, as well as the standard deviation of median model predictions (where the former is an average of between-prediction uncertainty, and the latter is the a measure of variation in median predictions across a district). There are the columns `k13_median`, `k13_mediansd`, `k13_sd`. `k13_median` and `k13_sd` are means of the median prediction and standard deviation of the k13 model in the district, respectively, while `k13_mediansd` is the standard deviation of model median predictions.
 
 
 ### R Version Control 
 
 All code successfully run with following software versions:
+(need to update)
 
 ```
 R version 4.1.2 (2021-11-01)

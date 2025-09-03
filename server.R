@@ -1,4 +1,5 @@
 # OPEN VERSION
+source("run_me_first.R")
 
 server <- (function(input, output, session){
   
