@@ -1,5 +1,5 @@
-# script to create district_summary.csv
-# publish national data alongside? need to confirm?
+# script to create district_summary.csv, a table of covariate values 
+# (from the rasters in /data/) for each district
 
 library(sf)
 library(terra)
@@ -9,7 +9,11 @@ library(dplyr)
 ind_shp = st_read("districts")
 
 # MAP covariates, model outputs
-ind_covs <- rast("indapp_covs.grd")
+ind_covs <- rast("data/ind_covs.grd")
+names(ind_covs)
+names(ind_covs) <- c("hpop", "dhps_median", "k13_median", "dhps_sd", "k13_sd",
+                     "pfpr", "temp_suit", "access")
+# apply some scaling
 ind_covs$hpop <- log10(ind_covs$hpop + 0.01)
 # accessibility inverted from travel time to cities
 ind_covs$access <- 1/(ind_covs$access + 1)
@@ -116,7 +120,10 @@ write.csv(district_summary %>%
             dplyr::select(-c(name)), "district_summary.csv", row.names=FALSE)
 
 ################################################################################
-# here's the bit involving NMCP data:
+# here's the bit involving NMCP data: 
+# ... I'm just going to leave out as we don't refer to it in the manuscript and
+# it appears to be out of date
+#
 # read in Pf case data:
 # pf_case = read.csv("districts_pf_2018.csv")
 # pf_case = pf_case[-which(pf_case$District == "MAHE"),] # Mahe ended up excluded earlier .. too small
