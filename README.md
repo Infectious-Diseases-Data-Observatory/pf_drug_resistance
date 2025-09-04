@@ -37,6 +37,8 @@ application code to initialise covariate data!*
   navigate to the All Covariates tab. Log-transfrom the covariates if
   needed.
 
+![](screenshot.png)
+
 ### Covariate layers
 
 There are several covariates included in this tool:
@@ -115,8 +117,7 @@ standard deviation of model median predictions.
 
 ### R Version Control
 
-All code successfully run with following software versions: (need to
-update)
+All code successfully run with following software versions:
 
     R version 4.4.2 (2024-10-31)
     Platform: aarch64-apple-darwin20

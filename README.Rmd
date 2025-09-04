@@ -24,6 +24,8 @@ The app is live [here](https://iddo.shinyapps.io/pf_drug_resistance/)!
 
 - To view all available filtering covariates, summarised by district, navigate to the All Covariates tab. Log-transfrom the covariates if needed.
 
+![](screenshot.png)
+
 ### Covariate layers
 
 There are several covariates included in this tool:
@@ -64,7 +66,6 @@ Covariate data are summarised for each district in `district_summary.csv`. For a
 ### R Version Control 
 
 All code successfully run with following software versions:
-(need to update)
 
 ```
 R version 4.4.2 (2024-10-31)
