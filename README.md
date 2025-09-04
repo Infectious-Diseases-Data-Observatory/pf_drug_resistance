@@ -1,4 +1,4 @@
-*P. falciparum* surveillance site selection support tool
+*P. falciparum* site selection support tool
 ================
 
 *To run the app locally, ensure `run_me_first.R` is run before
@@ -7,12 +7,12 @@ application code to initialise covariate data!*
 ### Site selection workflow
 
 1.  Start with all districts in India
-2.  Districts selected: Districts are filtered and ranked by Pf case
-    data and modelling outputs (*extent of current app*)
-3.  Feasible pixels: Pixels are excluded based on thresholds of
-    feasibility in covariates, not implemented in this app
-4.  PHCs in top districts selected: based on further
-    feasibility/convenience, not implemented in this app
+2.  Districts are filtered and ranked by modelling outputs + other
+    relevant epidemiological covariates
+3.  Shortlisted districts are grouped into transmission (low, medium,
+    high) using national state-level data, and districts are selected
+    from each group based on local transmission and infrastructure for
+    surveillance (*not implemented in app*)
 
 ### How to use the tool
 
@@ -22,9 +22,14 @@ application code to initialise covariate data!*
   each filter once it appears in the sidebar at far left.
 
 - Press the **“Update filters”** button to see your preferences
-  reflected in the Filtering Maps and Filtering Table tabs. The filters
-  are visualised in sequence in the Filtering Maps tab and the final set
-  of districts are downloadable from the Filtering Table tab.
+  reflected in the Filtering Maps, Inspect Districts, and Filtering
+  Table tabs:
+
+  - The filters are visualised in sequence in the Filtering Maps tab.
+  - The shortlisted districts are visualised in a scrollable map in the
+    Inspect Districts tab, and
+  - The final set of districts are downloadable from the Filtering Table
+    tab.
 
 - To view all available filtering covariates, summarised by district,
   navigate to the All Covariates tab. Log-transfrom the covariates if
@@ -46,20 +51,16 @@ There are several covariates included in this tool:
   transmission of Plasmodium falciparum and P. vivax Parasites &
   Vectors. May 2011 4: 92.* <https://doi.org/10.1186/1756-3305-4-92>
 
-- ***Plasmodium falciparum* parasite rate, 2019 (Malaria Atlas
+- ***Plasmodium falciparum* parasite rate, 2021 (Malaria Atlas
   Project)**  
   This layer is a time-aware mosaic data set showing predicted
   age-standardised parasite rate for *Plasmodium falciparum* malaria for
   children two to ten years of age (PfPR2-10) for each year. We are
-  using PfPR2-10 estimates for 2019.  
+  using PfPR2-10 estimates for 2021.  
   *Weiss DJ, Lucas TCD, Nguyen M, et al. Mapping the global prevalence,
   incidence, and mortality of Plasmodium falciparum, 2000–17: a spatial
   and temporal modelling study. Lancet 2019; published online June 19.*
   <https://doi.org/10.1016/S0140-6736(19)31097-9>  
-  *Battle KE, Lucas TCD, Nguyen M, et al. Mapping the global endemicity
-  and clinical burden of Plasmodium vivax, 2000–17: a spatial and
-  temporal modelling study. Lancet 2019; published online June 19.*
-  <https://doi.org/10.1016/S0140-6736(19)31096-7>
 
 - **Predicted travel time to nearest cities in 2015 (Malaria Atlas
   Project)**  
@@ -80,17 +81,17 @@ There are several covariates included in this tool:
   on human population distributions.  
   <https://www.worldpop.org/methods/populations>
 
-- **dhps540E predicted resistance, YEAR**  
+- **dhps540E predicted resistance, 2021**  
   Predicted median estimated prevalence of the dhp540E marker.
 
-- **dhps540E predicted resistance (uncertainty), YEAR**  
+- **dhps540E predicted resistance (uncertainty), 2021**  
   Standard deviate of the estimated prevalence of the dhp540E marker.
 
-- **kelch13 predicted resistance, YEAR**  
+- **kelch13 predicted resistance, 2021**  
   Predicted median estimated prevalence of kelch13 markers (any markers,
   ie not wildtype).
 
-- **kelch13 predicted resistance (uncertainty), YEAR**  
+- **kelch13 predicted resistance (uncertainty), 2021**  
   Standard deviate of the estimated prevalence of kelch13 markers (any
   markers, ie not wildtype).
 
@@ -105,42 +106,54 @@ prediction and model uncertainty are provided, as well as the standard
 deviation of median model predictions (where the former is an average of
 between-prediction uncertainty, and the latter is the a measure of
 variation in median predictions across a district). There are the
-columns `k13median`, `k13mediansd`, `k13sd`. `k13median` and `k13sd` are
-means of the median prediction and standard deviation of the k13 model
-in the district, respectively, while `k13mediansd` is the standard
-deviation of model median predictions.
+columns `k13_median`, `k13_mediansd`, `k13_sd`. `k13_median` and
+`k13_sd` are means of the median prediction and standard deviation of
+the k13 model in the district, respectively, while `k13_mediansd` is the
+standard deviation of model median predictions.
 
 ### R Version Control
 
-All code successfully run with following software versions:
+All code successfully run with following software versions: (need to
+update)
 
-    R version 4.1.2 (2021-11-01)
-    Platform: x86_64-apple-darwin17.0 (64-bit)
-    Running under: macOS Big Sur 11.6.4
+    R version 4.4.2 (2024-10-31)
+    Platform: aarch64-apple-darwin20
+    Running under: macOS Sequoia 15.1.1
 
     Matrix products: default
-    LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+    BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
+    LAPACK: /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 
     locale:
-    [1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+    [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+    time zone: Europe/London
+    tzcode source: internal
 
     attached base packages:
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] sf_1.0-7          plotfunctions_1.4 raster_3.5-15     sp_1.4-6          markdown_1.1      DT_0.21          
-    [7] dplyr_1.0.8       viridisLite_0.4.0 shiny_1.7.1      
+     [1] rsconnect_1.5.0   leaflet_2.2.2     cowplot_1.1.3     sortable_0.5.0    sf_1.0-19        
+     [6] terra_1.8-42      markdown_2.0      DT_0.33           lubridate_1.9.4   forcats_1.0.0    
+    [11] stringr_1.5.1     dplyr_1.1.4       purrr_1.0.4       readr_2.1.5       tidyr_1.3.1      
+    [16] tibble_3.3.0      ggplot2_3.5.2     tidyverse_2.0.0   viridisLite_0.4.2 shiny_1.10.0     
 
     loaded via a namespace (and not attached):
-     [1] bslib_0.3.1        tidyselect_1.1.2   terra_1.5-21       xfun_0.30          purrr_0.3.4       
-     [6] lattice_0.20-45    vctrs_0.3.8        generics_0.1.2     htmltools_0.5.2    yaml_2.3.5        
-    [11] utf8_1.2.2         rlang_1.0.2        jquerylib_0.1.4    e1071_1.7-9        later_1.3.0       
-    [16] pillar_1.7.0       glue_1.6.2         withr_2.5.0        DBI_1.1.2          lifecycle_1.0.1   
-    [21] fontawesome_0.2.2  htmlwidgets_1.5.4  codetools_0.2-18   evaluate_0.15      knitr_1.37        
-    [26] fastmap_1.1.0      crosstalk_1.2.0    httpuv_1.6.5       class_7.3-19       fansi_1.0.2       
-    [31] Rcpp_1.0.8.3       KernSmooth_2.23-20 xtable_1.8-4       promises_1.2.0.1   classInt_0.4-3    
-    [36] cachem_1.0.6       jsonlite_1.8.0     mime_0.12          digest_0.6.29      grid_4.1.2        
-    [41] rgdal_1.5-28       cli_3.2.0          tools_4.1.2        sass_0.4.0         magrittr_2.0.3    
-    [46] proxy_0.4-26       tibble_3.1.6       crayon_1.5.0       pkgconfig_2.0.3    ellipsis_0.3.2    
-    [51] data.table_1.14.2  rstudioapi_0.13    rmarkdown_2.13     R6_2.5.1           units_0.8-0       
-    [56] compiler_4.1.2  
+     [1] gtable_0.3.6       bslib_0.8.0        xfun_0.51          learnr_0.11.5     
+     [5] htmlwidgets_1.6.4  tzdb_0.5.0         vctrs_0.6.5        tools_4.4.2       
+     [9] crosstalk_1.2.1    generics_0.1.3     proxy_0.4-27       pkgconfig_2.0.3   
+    [13] KernSmooth_2.23-24 RColorBrewer_1.1-3 assertthat_0.2.1   lifecycle_1.0.4   
+    [17] compiler_4.4.2     farver_2.1.2       textshaping_0.4.1  fontawesome_0.5.3 
+    [21] codetools_0.2-20   litedown_0.6       httpuv_1.6.15      sass_0.4.9        
+    [25] htmltools_0.5.8.1  class_7.3-22       yaml_2.3.10        jquerylib_0.1.4   
+    [29] later_1.4.1        pillar_1.11.0      ellipsis_0.3.2     classInt_0.4-11   
+    [33] cachem_1.1.0       mime_0.12          commonmark_1.9.2   tidyselect_1.2.1  
+    [37] digest_0.6.37      stringi_1.8.7      labeling_0.4.3     rprojroot_2.1.0   
+    [41] fastmap_1.2.0      grid_4.4.2         cli_3.6.5          magrittr_2.0.3    
+    [45] e1071_1.7-16       withr_3.0.2        scales_1.4.0       promises_1.3.2    
+    [49] timechange_0.3.0   rmarkdown_2.29     ragg_1.3.3         hms_1.1.3         
+    [53] memoise_2.0.1      evaluate_1.0.3     knitr_1.49         rlang_1.1.6       
+    [57] Rcpp_1.1.0         xtable_1.8-4       glue_1.8.0         DBI_1.2.3         
+    [61] rstudioapi_0.17.1  jsonlite_2.0.0     R6_2.6.1           systemfonts_1.1.0 
+    [65] units_0.8-5   
