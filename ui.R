@@ -1,4 +1,5 @@
 # OPEN VERSION
+source("server.R")
 
 ui <- fluidPage(
   

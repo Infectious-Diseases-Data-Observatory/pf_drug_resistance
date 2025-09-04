@@ -1,4 +1,10 @@
 # OPEN VERSION
+message("her")
+source("run_me_first.R")
+message("heree")
+
+library(rsconnect)
+deployApp()
 
 server <- (function(input, output, session){
   
