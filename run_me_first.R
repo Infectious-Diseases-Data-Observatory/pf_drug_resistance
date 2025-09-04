@@ -12,6 +12,8 @@ library(sortable)
 library(cowplot)
 library(leaflet)
 
+message("here")
+
 
 # table summarising covariates for each district
 # added a column here for product of k13 average and uncertainty
