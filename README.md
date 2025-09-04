@@ -1,6 +1,8 @@
 *P. falciparum* site selection support tool
 ================
 
+The app is live [here](https://iddo.shinyapps.io/pf_drug_resistance/)!
+
 *To run the app locally, ensure `run_me_first.R` is run before
 application code to initialise covariate data!*
 
