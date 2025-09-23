@@ -1,21 +1,26 @@
 [general]
+creator=R package 'raster'
+created=2025-09-23 13:51:38
 [data]
 datatype=FLT4S
-nodatavalue=nan
 byteorder=little
 nbands=8
 bandorder=BIL
-minvalue=-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19:-3.68934881474191032e+19
-maxvalue=3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19:3.68934881474191032e+19
-categorical=FALSE
+minvalue=0.00319972168654203:0.0113276485353708:0.00843917485326529:0.117282710969448:0:0:0:0
+maxvalue=0.181838750839233:0.222341641783714:0.490475505590439:0.3082355260849:24250:83281.8671875:0.805101156234741:0.270192742347717
+nodatavalue=-3.4e+38
+[legend]
+legendtype=
+values=
+color=
 [description]
-layername=PopulationIndia:Resistance_median_2021_dhps540:Resistance_median_2021_K13:Resistance_sd_2021_dhps540:Resistance_sd_2021_K13:Proportion of Children 2 to 10 years of age showing, on a given year, detectable Plasmodium falciparum parasite 2000-2022-2021:Plasmodium falciparum Temperature Suitability:Travel Time to Cities
+layername=k13median:k13sd:spmedian:spsd:access:hpop:temp_suit:pfpr
 [georeference]
-nrows=728
-ncols=702
-xmin=68.1665920499997213
-ymin=6.74997526699984007
-xmax=97.4165803499970906
-ymax=37.0832964669971119
+nrows=840
+ncols=840
+xmin=64.99992665
+ymin=4.999975967
+xmax=99.9999126499969
+ymax=39.9999619669968
 projection=+proj=longlat +datum=WGS84 +no_defs
-wkt=GEOGCRS["WGS 84 (CRS84)",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic longitude (Lon)",east,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic latitude (Lat)",north,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["unknown"],AREA["World"],BBOX[-90,-180,90,180]],ID["OGC","CRS84"]]
+wkt=GEOGCRS["unknown",    DATUM["World Geodetic System 1984",        ELLIPSOID["WGS 84",6378137,298.257223563,            LENGTHUNIT["metre",1]],        ID["EPSG",6326]],    PRIMEM["Greenwich",0,        ANGLEUNIT["degree",0.0174532925199433],        ID["EPSG",8901]],    CS[ellipsoidal,2],        AXIS["longitude",east,            ORDER[1],            ANGLEUNIT["degree",0.0174532925199433,                ID["EPSG",9122]]],        AXIS["latitude",north,            ORDER[2],            ANGLEUNIT["degree",0.0174532925199433,                ID["EPSG",9122]]]]

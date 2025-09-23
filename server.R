@@ -159,7 +159,7 @@ server <- (function(input, output, session){
       summary = paste0("<strong>", district, ",</strong> ", state, "</br>", summary))
     
     
-    leaflet() %>%
+    r <- leaflet() %>%
       addTiles() %>%
       setView(80, 21, zoom = 4) %>%
       addPolygons(data = polys_to_show %>% st_as_sf(),
@@ -168,6 +168,8 @@ server <- (function(input, output, session){
       addMarkers(data = pts_to_show,
                  label = ~summary %>%
                    lapply(htmltools::HTML))
+    message("If you're seeing this, leaflet didn't crash the whole thing")
+    r
   })
 })
 

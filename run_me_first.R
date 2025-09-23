@@ -69,7 +69,7 @@ npal <- 100
 
 to_plot <- ind_shp_simp %>%
   #dplyr::select(-c(npixel:state)) %>%
-  pivot_longer(cols = hpop:access) %>%
+  pivot_longer(cols = k13_median:pfpr) %>%
   filter(name %in% names(filter_variables)) %>%
   mutate(value = ifelse(name == "hpop", 10**(value - 0.01), value)) %>%
   mutate(name = unlist(filter_variables[name])) %>%
@@ -94,7 +94,7 @@ ggsave("covt_summary_districts.png", height=7.2, width=5, scale = 1.5)
 # # should rectify that at some point
 
 to_plot <- ind_shp_simp %>%
-  pivot_longer(cols = hpop:access) %>%
+  pivot_longer(cols = k13_median:pfpr) %>%
   filter(name %in% names(filter_variables)) %>%
   mutate(value = ifelse(name != "hpop", log10(value), value)) %>%
   mutate(name = unlist(filter_variables[name])) %>%

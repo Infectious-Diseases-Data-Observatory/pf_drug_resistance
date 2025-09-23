@@ -4,20 +4,21 @@
 library(sf)
 library(terra)
 library(dplyr)
+library(raster)
 
 # district shapes
 ind_shp = st_read("districts")
 
 # MAP covariates, model outputs
-ind_covs <- rast("data/ind_covs.grd")
+ind_covs <- stack("data/ind_covs.grd")
 names(ind_covs)
-names(ind_covs) <- c("hpop", "dhps_median", "k13_median", "dhps_sd", "k13_sd",
-                     "pfpr", "temp_suit", "access")
+names(ind_covs) <- c("k13_median", "k13_sd", "dhps_median", "dhps_sd", 
+                     "access", "hpop", "temp_suit", "pfpr")
 # apply some scaling
 ind_covs$hpop <- log10(ind_covs$hpop + 0.01)
 # accessibility inverted from travel time to cities
 ind_covs$access <- 1/(ind_covs$access + 1)
-ind_map <- rast("ind_map.grd")
+ind_map <- raster("ind_map.grd")
 
 district_summarise <- function(district, 
                                covts, 
@@ -37,9 +38,9 @@ district_summarise <- function(district,
         width = 3000,
         height = 2400,
         pointsize = 30)
-    par(mfrow = n2mfrow(nlyr(district_covts)*2), 
+    par(mfrow = n2mfrow(nlayers(district_covts)*2), 
         oma = c(0,0,3,0), mar = c(5.1,4.1,4.1,0.1), bty="n")
-    for (covt in 1:nlyr(district_covts)){
+    for (covt in 1:nlayers(district_covts)){
       plot(district_covts[[covt]], 
            col = viridis(100), 
            main = paste0(names(district_covts)[covt], " map"),
@@ -55,7 +56,7 @@ district_summarise <- function(district,
   }
   
   retlst = list()
-  for (covt in 1:nlyr(district_covts)){
+  for (covt in 1:nlayers(district_covts)){
     # mean of covariate layer in district - MAP covts, model median predictions and sds
     retlst[names(district_covts)[covt]] = mean(values(district_covts[[covt]]), na.rm=TRUE)
     if (grepl("median", names(district_covts)[covt], fixed = TRUE)){
@@ -96,6 +97,9 @@ district_summary <- sapply(1:nrow(nonempty_shp), function(x){
 }) %>%
   t()
 
+district_summarise(nonempty_shp[344,],
+                   ind_covs,
+                   site_name = nonempty_shp$District[344])
 
 district_summary <- district_summary %>%
   apply(2, unlist) %>%
