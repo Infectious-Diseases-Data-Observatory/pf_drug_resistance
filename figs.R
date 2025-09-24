@@ -51,11 +51,11 @@ spsdlim = range(values(model_outs$spsd), na.rm=TRUE)
 shp_plot <- function(shp, llim, xlim, ylim, lab = ""){
   # would like to add states over the top
   ggplot(shp) +
-    geom_sf(linewidth = 0.1, aes(fill = value)) +
+    geom_sf(linewidth = 0.05, aes(fill = value), col = NA) +
     scale_fill_viridis_c(limits = llim, guide = "none") +
     geom_text(data = data.frame(matrix(NA, ncol=3)), # dummy row
               aes(x = 70, y = 35, label = lab)) +
-    geom_sf(data = states, fill = NA, col = "grey") +
+    geom_sf(data = states, fill = NA, col = "grey", lwd = 0.1) +
     theme_bw() +
     xlim(xlim) +
     ylim(ylim) +
